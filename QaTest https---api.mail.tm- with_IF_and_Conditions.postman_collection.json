@@ -1,0 +1,290 @@
+{
+	"info": {
+		"_postman_id": "42357279-0544-4108-b2ad-26236a71610b",
+		"name": "QaTest https://api.mail.tm/ with_IF_and_Conditions",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "createTempMailBox",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const email = pm.variables.replaceIn(\"{{$timestamp}}!{{$randomFirstName}}@metalunits.com\").toLowerCase();\r",
+							"pm.collectionVariables.set(\"email\",email);\r",
+							"console.log(\"мой email = \" + pm.collectionVariables.get(\"email\"));\r",
+							"\r",
+							"const password = pm.variables.replaceIn(\"{{$randomPassword}}!Bd\");\r",
+							"pm.collectionVariables.set(\"password\",password);\r",
+							"console.log(\"мой password = \" + pm.collectionVariables.get(\"password\"));"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (!pm.response.to.have.status(201) && !pm.response.to.have.status(200)){\r",
+							"    postman.setNextRequest(null)\r",
+							"} \r",
+							"else{\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"pm.collectionVariables.set(\"id\", jsonData.id);\r",
+							"console.log(\"id value = \" + pm.collectionVariables.get(\"id\"));\r",
+							"\r",
+							"pm.test(\"Successful POST request\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code name has string Created or OK\", function () {\r",
+							"    pm.response.to.have.status(\"Created\") || pm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Test data type of the response\", function () {\r",
+							"    pm.expect(jsonData.id).to.be.not.null;\r",
+							"    pm.expect(jsonData.address).to.be.a(\"string\");\r",
+							"    pm.expect(jsonData.used).to.be.a(\"number\");\r",
+							"    pm.expect(jsonData.quota).to.be.a(\"number\");\r",
+							"    pm.expect(jsonData.isDisabled).to.be.false;\r",
+							"    pm.expect(jsonData.isDeleted).to.be.false;\r",
+							"    pm.expect(jsonData.createdAt).to.be.a(\"string\");\r",
+							"    pm.expect(jsonData.updatedAt).to.be.a(\"string\");\r",
+							"});\r",
+							"}\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"address\": \"{{email}}\",\r\n  \"password\": \"{{password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/accounts",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"accounts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getToken",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if(!pm.response.to.have.status(200) && !pm.response.to.have.status(201)){\r",
+							"    postman.setNextRequest(null)\r",
+							"}\r",
+							"else{\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code name has string OK\", function () {\r",
+							"    pm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"pm.collectionVariables.set(\"token\", jsonData.token);\r",
+							"console.log(\"token value =\" + pm.collectionVariables.get(\"token\"));\r",
+							"\r",
+							"pm.test(\"Test data type of the response\", function () {\r",
+							"    pm.expect(jsonData.token).to.be.not.null;\r",
+							"    pm.expect(jsonData.id).to.be.a(\"string\");\r",
+							"    });\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"address\": \"{{email}}\",\r\n  \"password\": \"{{password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/token",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getMailBoxMessages",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if(!pm.response.to.have.status(200) && !pm.response.to.have.status(201)){\r",
+							"    postman.setNextRequest(null)\r",
+							"}\r",
+							"else\r",
+							"{\r",
+							"    pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code name has string OK\", function () {\r",
+							"    pm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/messages",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"messages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deleteTempMailBox",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if(!pm.response.to.have.status(204)){\r",
+							"    postman.setNextRequest(null)\r",
+							"}\r",
+							"else\r",
+							"{\r",
+							"    pm.test(\"Status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code name has string No Content\", function () {\r",
+							"    pm.response.to.have.status(\"No Content\");\r",
+							"});\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/accounts/{{id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"accounts",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "password",
+			"value": ""
+		},
+		{
+			"key": "id",
+			"value": ""
+		},
+		{
+			"key": "token",
+			"value": ""
+		},
+		{
+			"key": "url",
+			"value": "https://api.mail.tm"
+		},
+		{
+			"key": "email",
+			"value": ""
+		}
+	]
+}
