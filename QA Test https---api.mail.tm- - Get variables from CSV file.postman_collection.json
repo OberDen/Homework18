@@ -1,0 +1,233 @@
+{
+	"info": {
+		"_postman_id": "33c99e5d-74da-4cc5-a3aa-c0c45dcd32d4",
+		"name": "QA Test https://api.mail.tm/ | Get variables from CSV file",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "createTempMailBox",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// const email = pm.variables.replaceIn(\"{{$timestamp}}!{{$randomFirstName}}@metalunits.com\").toLowerCase();\r",
+							"// pm.collectionVariables.set(\"email\",email);\r",
+							"// console.log(\"мой email = \" + pm.collectionVariables.get(\"email\"));\r",
+							"\r",
+							"// const password = pm.variables.replaceIn(\"{{$randomPassword}}!Bd\");\r",
+							"// pm.collectionVariables.set(\"password\",password);\r",
+							"// console.log(\"мой password = \" + pm.collectionVariables.get(\"password\"));"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// if (!pm.response.to.have.status(201) && !pm.response.to.have.status(200)){\r",
+							"//     postman.setNextRequest(null)\r",
+							"// } else{\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"pm.collectionVariables.set(\"id\", jsonData.id);\r",
+							"\r",
+							"console.log(\"id value = \" + pm.collectionVariables.get(\"id\"));\r",
+							"// }\r",
+							"\r",
+							"// pm.test(\"Status code is 200\", function () {\r",
+							"//     pm.response.to.have.status(200);\r",
+							"// });\r",
+							"\r",
+							"// pm.test(\"Successful POST request\", function () {\r",
+							"//     pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+							"// });\r",
+							"\r",
+							"// pm.test(\"Status code name has string\", function () {\r",
+							"//     pm.response.to.have.status(\"Created\");\r",
+							"// });"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"address\": \"{{email}}\",\r\n  \"password\": \"{{password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://api.mail.tm/accounts",
+					"protocol": "https",
+					"host": [
+						"api",
+						"mail",
+						"tm"
+					],
+					"path": [
+						"accounts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getToken",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"pm.collectionVariables.set(\"token\", jsonData.token);\r",
+							"\r",
+							"console.log(\"token value =\" + pm.collectionVariables.get(\"token\"));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"address\": \"{{email}}\",\r\n  \"password\": \"{{password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://api.mail.tm/token",
+					"protocol": "https",
+					"host": [
+						"api",
+						"mail",
+						"tm"
+					],
+					"path": [
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getMailBoxMessages",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.mail.tm/messages",
+					"protocol": "https",
+					"host": [
+						"api",
+						"mail",
+						"tm"
+					],
+					"path": [
+						"messages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deleteTempMailBox",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://api.mail.tm/accounts/{{id}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"mail",
+						"tm"
+					],
+					"path": [
+						"accounts",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "password",
+			"value": ""
+		},
+		{
+			"key": "id",
+			"value": ""
+		},
+		{
+			"key": "token",
+			"value": ""
+		},
+		{
+			"key": "url",
+			"value": "https://api.mail.tm",
+			"disabled": true
+		},
+		{
+			"key": "email",
+			"value": ""
+		}
+	]
+}
